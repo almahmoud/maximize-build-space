@@ -151,9 +151,16 @@ runs:
           else
             sudo mkfs.ext4 -Enodiscard -m0 "/dev/mapper/${VG_NAME}-buildlv"
           fi
+          mkdir -p "${BUILD_MOUNT_PATH}"
+          mkdir -p "/tmp/${BUILD_MOUNT_PATH}"
+          sudo cp -r "${BUILD_MOUNT_PATH}" "/tmp/${BUILD_MOUNT_PATH}"
+          sudo chown --reference="${BUILD_MOUNT_PATH}" -R "/tmp/${BUILD_MOUNT_PATH}"
+          sudo chgrp --reference="${BUILD_MOUNT_PATH}" -R "/tmp/${BUILD_MOUNT_PATH}"
           sudo mount "/dev/mapper/${VG_NAME}-buildlv" "${BUILD_MOUNT_PATH}"
-          sudo chown -R runner "${BUILD_MOUNT_PATH}"
-          sudo chgrp -R runner "${BUILD_MOUNT_PATH}"
+          sudo cp -r "/tmp/${BUILD_MOUNT_PATH}" "$(dirname ${BUILD_MOUNT_PATH})"
+          sudo chown --reference="/tmp/${BUILD_MOUNT_PATH}" -R "${BUILD_MOUNT_PATH}"
+          sudo chgrp --reference="/tmp/${BUILD_MOUNT_PATH}" -R "${BUILD_MOUNT_PATH}"
+          sudo rm -rf /tmp/${BUILD_MOUNT_PATH}
 
     - name: Disk space report after modification
       shell: bash
