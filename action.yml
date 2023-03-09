@@ -118,6 +118,7 @@ runs:
           # create loop pv image on root fs
           ROOT_RESERVE_KB=$(expr ${{ inputs.root-reserve-mb }} \* 1024)
           ROOT_FREE_KB=$(df --block-size=1024 --output=avail / | tail -1)
+          echo "Free root space: $ROOT_FREE_KB"
           ROOT_LVM_SIZE_KB=$(expr $ROOT_FREE_KB - $ROOT_RESERVE_KB)
           ROOT_LVM_SIZE_BYTES=$(expr $ROOT_LVM_SIZE_KB \* 1024)
           sudo touch "${{ inputs.pv-loop-path }}" && sudo fallocate -z -l "${ROOT_LVM_SIZE_BYTES}" "${{ inputs.pv-loop-path }}"
@@ -151,16 +152,16 @@ runs:
           else
             sudo mkfs.ext4 -Enodiscard -m0 "/dev/mapper/${VG_NAME}-buildlv"
           fi
-          mkdir -p "${BUILD_MOUNT_PATH}"
-          mkdir -p "/tmp/${BUILD_MOUNT_PATH}"
-          sudo cp -r "${BUILD_MOUNT_PATH}" "/tmp/${BUILD_MOUNT_PATH}"
-          sudo chown --reference="${BUILD_MOUNT_PATH}" -R "/tmp/${BUILD_MOUNT_PATH}"
-          sudo chgrp --reference="${BUILD_MOUNT_PATH}" -R "/tmp/${BUILD_MOUNT_PATH}"
-          sudo mount "/dev/mapper/${VG_NAME}-buildlv" "${BUILD_MOUNT_PATH}"
-          sudo cp -r "/tmp/${BUILD_MOUNT_PATH}" "$(dirname ${BUILD_MOUNT_PATH})"
-          sudo chown --reference="/tmp/${BUILD_MOUNT_PATH}" -R "${BUILD_MOUNT_PATH}"
-          sudo chgrp --reference="/tmp/${BUILD_MOUNT_PATH}" -R "${BUILD_MOUNT_PATH}"
-          sudo rm -rf /tmp/${BUILD_MOUNT_PATH}
+          # mkdir -p "${BUILD_MOUNT_PATH}"
+          # mkdir -p "/tmp/${BUILD_MOUNT_PATH}"
+          # sudo cp -r "${BUILD_MOUNT_PATH}" "/tmp/${BUILD_MOUNT_PATH}"
+          # sudo chown --reference="${BUILD_MOUNT_PATH}" -R "/tmp/${BUILD_MOUNT_PATH}"
+          # sudo chgrp --reference="${BUILD_MOUNT_PATH}" -R "/tmp/${BUILD_MOUNT_PATH}"
+          # sudo mount "/dev/mapper/${VG_NAME}-buildlv" "${BUILD_MOUNT_PATH}"
+          # sudo cp -r "/tmp/${BUILD_MOUNT_PATH}" "$(dirname ${BUILD_MOUNT_PATH})"
+          # sudo chown --reference="/tmp/${BUILD_MOUNT_PATH}" -R "${BUILD_MOUNT_PATH}"
+          # sudo chgrp --reference="/tmp/${BUILD_MOUNT_PATH}" -R "${BUILD_MOUNT_PATH}"
+          # sudo rm -rf /tmp/${BUILD_MOUNT_PATH}
 
     - name: Disk space report after modification
       shell: bash
